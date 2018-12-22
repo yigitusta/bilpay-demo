@@ -59,7 +59,7 @@ class Cart extends Component {
                                 {this.state.showModal &&
                                     <BilPay
                                         shopName="BilPay DEMO Shop"
-                                        publicKey="thePublicKey"
+                                        publicKey="GBVJSSO44XHCMFDPCVGLYKK7ZD2QMGK5N3PQUJFJVG2FEBICVNQZMTTM"
                                         amount={total}
                                         additionalInfo= {{ merchantOrderID: String(parseInt(Math.random() * 100000)) }}
                                     />
