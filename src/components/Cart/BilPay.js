@@ -6,6 +6,9 @@ class BilPay extends Component {
   componentDidMount() {
     this.sendAuthorizationRequest();
   }
+  componentWillUnmount() {
+    this.interval && clearInterval(this.interval) && console.log("removed interval");
+  }
   state = {
     status: "loading",
     url: window.url,
@@ -61,7 +64,7 @@ class BilPay extends Component {
   }
 
   pollTransactionStatus() {
-    const interval = setInterval(function() {
+    this.interval = setInterval(function() {
       fetch(this.state.url + `/${this.state.transactionID}`, {
         method: 'GET'
       })
@@ -70,7 +73,7 @@ class BilPay extends Component {
         console.log(result);
         if (result.status === "received") {
           this.setState({ status: "success" });
-          clearInterval(interval);
+          clearInterval(this.interval);
         }
       });
     }.bind(this), 1000);
