@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import { QRCode } from 'react-qr-svg';
+import posed from 'react-pose';
+import Success from './Success';
+import './Bilpay.css';
 window.url = "https://stellar.altugankarali.com/api/merchant/authorize";
 
 class BilPay extends Component {
   componentDidMount() {
     this.sendAuthorizationRequest();
+    window.success = () => this.setState.call(this, { status: "success" });
   }
   componentWillUnmount() {
-    this.interval && clearInterval(this.interval) && console.log("removed interval");
+    this.interval && clearInterval(this.interval);
   }
   state = {
     status: "loading",
@@ -47,23 +51,26 @@ class BilPay extends Component {
     })
     .then(response => response.json())
     .then(result => {
-      if (!!result.id) { // successfull
-        this.setState({
-          status: "authorized",
-          transactionID: result.id,
-          publicKey: result.merchant_public_key,
-          shopName: result.shop_name,
-          amount: result.amount,
-          additionalInfo: result.additional_info
-        });
-        this.pollTransactionStatus();
-      } else { // error
-        this.setState({ status: "authorizationError" });
-      }
+      setTimeout(() => {
+        if (!!result.id) { // successfull
+          this.setState({
+            status: "authorized",
+            transactionID: result.id,
+            publicKey: result.merchant_public_key,
+            shopName: result.shop_name,
+            amount: result.amount,
+            additionalInfo: result.additional_info
+          });
+          this.pollTransactionStatus();
+        } else { // error
+          this.setState({ status: "authorizationError" });
+        }
+      }, 300);
     });
   }
 
   pollTransactionStatus() {
+    this.interval && clearInterval(this.interval);
     this.interval = setInterval(function() {
       fetch(this.state.url + `/${this.state.transactionID}`, {
         method: 'GET'
@@ -79,27 +86,53 @@ class BilPay extends Component {
     }.bind(this), 1000);
   }
 
-  renderSuccess() {
+  renderLoading() {
     return (
-      <div>
-        <h2>PAYMENT SUCCESSFULL</h2>
-        <img src="images/success.png" alt="Success" style={{width: "30%"}}/>
-      </div>
+      <div>LOADING...</div>
+    );
+  }
+
+  renderError() {
+    return (
+      <div>Authorization Error...</div>
     );
   }
 
   render() {
+    if (this.state.status === "success") {
+      this.interval && clearInterval(this.interval);
+    }
+    const Box = posed.div({
+      hoverable: true,
+      init: { scale: 1 },
+      hover: { scale: 1.2 }
+    });
+
+    let content;
     switch (this.state.status) {
       case "loading":
       default:
-        return <div>LOADING...</div>;
+        content = this.renderLoading();
+        break;
       case "authorizationError":
-        return <div>Authorization Error...</div>;
+        content = this.renderError();
+        break;
       case "authorized":
-        return this.renderQRCode();
+        content = this.renderQRCode();
+        break;
       case "success":
-        return this.renderSuccess();
+        content = <Success />;
+        break;
     }
+
+    return (
+      <div className="bilpay-wrapper">
+        <h1 className="bilpay-header">Pay With BilPay</h1>
+          <Box className="bilpay-content-wrapper">
+            {content}
+          </Box>
+      </div>
+    );
   }
 }
 

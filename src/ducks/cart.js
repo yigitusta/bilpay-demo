@@ -3,11 +3,14 @@ import { getProduct } from '../ducks/products';
 // actions
 const CART_ADD   = 'cart/ADD';
 const CART_REMOVE = 'cart/REMOVE';
+const OPEN_PAYMENT = 'OPEN_PAYMENT';
+const CLOSE_PAYMENT = 'CLOSE_PAYMENT';
 
 // reducer
 const initialState = {
     items: [], // array of product ids
-    currency: 'BLC'
+    currency: 'BLC',
+    payment: false
 };
 
 export default function cart(state = initialState, action = {}) {
@@ -16,9 +19,27 @@ export default function cart(state = initialState, action = {}) {
             return handleCartAdd(state, action.payload);
         case CART_REMOVE:
             return handleCartRemove(state, action.payload);
+        case OPEN_PAYMENT:
+            return handleOpenPayment(state);
+        case CLOSE_PAYMENT:
+            return handleClosePayment(state);
         default:
             return state;
     }
+}
+
+function handleOpenPayment(state) {
+    return {
+        ...state,
+        payment: true
+    };
+}
+
+function handleClosePayment(state) {
+    return {
+        ...state,
+        payment: false
+    };
 }
 
 function handleCartAdd(state, payload) {
@@ -52,6 +73,22 @@ export function removeFromCart(productId) {
             productId
         }
     }
+}
+
+export function openPayment(){
+    return {
+        type: OPEN_PAYMENT
+    }
+}
+
+export function closePayment() {
+    return {
+        type: CLOSE_PAYMENT
+    }
+}
+
+export function getPaymentStatus(state, props) {
+    return state.cart.payment;
 }
 
 // selectors
