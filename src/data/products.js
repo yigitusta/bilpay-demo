@@ -8,7 +8,7 @@ const data = [
   },
   {
     id: 2,
-    name: 'Sessel Sofie',
+    name: 'Sessel Sofie Peacock',
     price: 249.99,
     currency: 'BLC',
     image: 'images/02.jpg',
