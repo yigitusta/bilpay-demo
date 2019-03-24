@@ -24,7 +24,7 @@ class Payment extends Component {
           <Modal closeModal={() => this.props.closePayment()}>
             <BilPay
               shopName="BilPay DEMO Shop"
-              publicKey="GDFPHZTO4YHRC6KE7X7SBBGVBY4V7ZPVAZLVR7LBEKNKJBQJY3KHOXWM"
+              publicKey="GDQ4HUXJXNKSKZD56HDXWUD3FTD7KCF7V3O4ZDZQD6RXFRSATHQIKXYI"
               amount={this.props.total}
               additionalInfo= {{ merchantOrderID: String(parseInt(Math.random() * 100000, 10)) }}
             />
